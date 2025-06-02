@@ -29,13 +29,13 @@ path: ID (pathStep)*;
 
 pathStep
     : DOT ID
+    | DOT AT ID
     | LEFT_BRACKET NUMBER RIGHT_BRACKET
-    | AT ID
     ;
 
 countExpr: path HASH;
 
-mapExpr: path ARROW ID;
+mapExpr: path ARROW ID (DOT ID)*;
 
 aggregateExpr: path ARROW ID PLUSPLUS;
 

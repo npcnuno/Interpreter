@@ -1,4 +1,4 @@
-// Generated from /home/katchow/Projects/ISCTE/3ano/compiladores/semana3/XML_Interpreter/src/main/kotlin/grammar/XQLParser.g4 by ANTLR 4.13.2
+// Generated from /home/katchow/Interpreter/XML_Interpreter/src/main/kotlin/grammar/XQLParser.g4 by ANTLR 4.13.2
 package grammar;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 

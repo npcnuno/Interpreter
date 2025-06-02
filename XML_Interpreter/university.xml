@@ -1,48 +1,16 @@
-<university id="univ123" name="Tech University">
-    <department code="CS">
-        <course code="CS101" level="undergraduate">
-            <title>Introduction to Programming</title>
-            <credits>3</credits>
-            <instructor id="prof1">
-                <name>Dr. Alice Smith</name>
-                <email>alice.smith@univ.edu</email>
-            </instructor>
-            <evaluation>
-                <item type="exam">Midterm</item>
-                <item type="project">Python Project</item>
-            </evaluation>
-            <description>Learn Python basics.</description>
-        </course>
-        <course code="CS202" level="graduate">
-            <title>Advanced Algorithms</title>
-            <credits>4</credits>
-            <instructor id="prof2">
-                <name>Dr. Bob Jones</name>
-                <email>bob.jones@univ.edu</email>
-            </instructor>
-            <evaluation>
-                <item type="exam">Final</item>
-            </evaluation>
-            <description>Study complex algorithms.</description>
-        </course>
-    </department>
-    <department code="EE">
-        <course code="EE101" level="undergraduate">
-            <title>Circuit Design</title>
-            <credits>3</credits>
-            <instructor id="prof3">
-                <name>Dr. Carol Lee</name>
-                <email>carol.lee@univ.edu</email>
-            </instructor>
-            <evaluation>
-                <item type="lab">Circuit Lab</item>
-                <item type="exam">Midterm</item>
-            </evaluation>
-            <description>Basics of circuit design.</description>
-        </course>
-    </department>
-    <contact>
-        <phone>123-456-7890</phone>
-        <website>www.univ.edu</website>
-    </contact>
-</university>
+<uc-set id="demo">
+    <course code="ELP">
+        <credits>6</credits>
+        <evaluation>
+            <item name="test" weight="40"/>
+            <item name="project" weight="60"/>
+        </evaluation>
+    </course>
+    <course code="PA">
+        <credits>6</credits>
+        <evaluation>
+            <item name="quizzes" weight="20"/>
+            <item name="project" weight="80"/>
+        </evaluation>
+    </course>
+</uc-set>

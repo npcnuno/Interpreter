@@ -1,13 +1,12 @@
 import interpreter.Interpreter
 import interpreter.Value
-import parser.XQLScriptParser
-import parser.XmlParser
+import parser.*
 import java.io.File
 import ast.*
 
 fun main(args: Array<String>) {
-  if (args.size != 2) {
-    println("Usage: <script-file.xql> <input-file.xml>")
+  if (args.size < 3) {
+    println("Usage: <script-file.xql> <input-file.xml> <output-file.xml>")
     return
   }
 
@@ -56,8 +55,8 @@ fun main(args: Array<String>) {
     return
   }
 
-  // Initialize interpreter
-  val interpreter = Interpreter(emptyList())
+  // Initialize interpreter with command-line arguments (excluding script file)
+  val interpreter = Interpreter(args.drop(1))
 
   // Load XML into 'doc' variable
   try {

@@ -11,7 +11,50 @@ object XQLScriptParser {
         val tokens = CommonTokenStream(lexer)
         val parser = XQLParser(tokens)
         val visitor = XQLVisitor()
-        return visitor.visit(parser.program()) as List<Statement>
+        val statements = visitor.visit(parser.program()) as List<Statement>
+        validateVariables(statements)
+        return statements
+    }
+
+    private fun validateVariables(statements: List<Statement>) {
+        val defined = mutableSetOf<String>("doc")
+        val used = mutableSetOf<String>()
+        statements.forEach {
+            when (it) {
+                is Load -> {
+                    defined.add(it.variable)
+                    used.addAll(collectUsedVariables(it.source))
+                }
+                is Assignment -> {
+                    defined.add(it.variable)
+                    used.addAll(collectUsedVariables(it.expression))
+                }
+                is Save -> {
+                    used.add(it.variable)
+                    used.addAll(collectUsedVariables(it.destination))
+                }
+            }
+        }
+        // Exclude template-specific variables defined in iteration context
+        val templateVars = setOf("code", "title", "instructor")
+        val undefined = used.filter {
+            !it.startsWith("$") || it.drop(1).toIntOrNull() == null
+        }.filter { it !in defined && it !in templateVars }
+        if (undefined.isNotEmpty()) throw Exception("Undefined variables: $undefined")
+    }
+
+    private fun collectUsedVariables(expr: Expression): Set<String> {
+        return when (expr) {
+            is Path -> setOf(expr.base) + expr.steps.filterIsInstance<Attribute>().map { it.name }
+            is CountExpr -> collectUsedVariables(expr.path)
+            is MapExpr -> collectUsedVariables(expr.path)
+            is AggregateExpr -> collectUsedVariables(expr.path)
+            is Literal -> emptySet()
+            is XmlTemplate -> {
+                val regex = Regex("\\$[a-zA-Z0-9_]+")
+                regex.findAll(expr.template).map { it.value.removePrefix("$") }.toSet()
+            }
+        }
     }
 }
 
@@ -63,9 +106,12 @@ private class XQLVisitor : XQLParserBaseVisitor<Any>() {
         val base = ctx.ID().text
         val steps = ctx.pathStep().map { step ->
             when {
-                step.DOT() != null -> Child(step.ID().text)
+                step.DOT() != null -> {
+                    val name = step.ID().text
+                    if (step.text.startsWith(".@")) Attribute(name)
+                    else Child(name)
+                }
                 step.LEFT_BRACKET() != null -> Index(step.NUMBER().text.toInt())
-                step.AT() != null -> Attribute(step.ID().text)
                 else -> throw IllegalStateException("Unknown path step")
             }
         }
@@ -77,7 +123,13 @@ private class XQLVisitor : XQLParserBaseVisitor<Any>() {
     }
 
     override fun visitMapExpr(ctx: XQLParser.MapExprContext): Expression {
-        return MapExpr(visitPath(ctx.path()) as Path, ctx.ID().text)
+        val path = visitPath(ctx.path()) as Path
+        val targetParts = mutableListOf(ctx.ID(0).text)
+        for (i in 1 until ctx.ID().size) {
+            targetParts.add(ctx.ID(i).text)
+        }
+        val target = targetParts.joinToString(".")
+        return MapExpr(path, target)
     }
 
     override fun visitAggregateExpr(ctx: XQLParser.AggregateExprContext): Expression {
