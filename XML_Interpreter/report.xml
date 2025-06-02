@@ -1,0 +1,7 @@
+<report univ_id="univ123" total_credits="10.0" course_count="3.0">
+    <department code="__cs_dept__.@code"><course__cs_courses__ name="__code__">
+        <title>__title__</title>
+        <instructor>__instructor__.name</instructor>
+    </course__cs_courses__>
+    </department>
+</report>

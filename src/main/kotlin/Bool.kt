@@ -1,0 +1,1 @@
+data class Bool(val value: Boolean) : Value
